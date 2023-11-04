@@ -1,3 +1,5 @@
+import { supabase } from '../client'
+import { useState } from 'react'
 
 const Edit = () => {
     const [crew, setCrew] = useState({name: "", color: "", speed: 0})
@@ -16,17 +18,25 @@ const Edit = () => {
 
     const updateCrew = async (event) => {
         event.preventDefault();
+      
+        await supabase
+          .from('crewmates')
+          .update({ name: crew.name, color: crew.color,  speed: crew.speed})
+          .eq('id', id);
+      
+        window.location = "/";
+      }
 
-       const { error } = await supabase
-        .from('crewmates')
-        .insert({name :crew.name, color: crew.color, speed: crew.speed})
-        .select()
-
-        if (error) {
-            console.log(error);
-        }
-        console.log(crew)
-        window.location = "/";}
+    const deleteCrew = async (event) => {
+        event.preventDefault();
+      
+        await supabase
+          .from('crewmates')
+          .delete()
+          .eq('id', id); 
+      
+        window.location = "/";
+      }
 
     return (<div>
         <h1>Update your crewmates!</h1>
@@ -53,7 +63,8 @@ const Edit = () => {
                 </div>
                 
             </form>
-            <button type='submit' onClick={createCrew}>Create Crewmate!</button>
+            <button type='submit' onClick={updateCrew}>Update Crewmate!</button>
+            <button type='submit' onClick={deleteCrew}>Delete Crewmate!</button>
             
     </div>
     )
